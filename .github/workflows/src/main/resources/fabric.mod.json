@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "treehunt",
+  "version": "${version}",
+  "name": "Tree Hunt",
+  "description": "Cut five logs and the Forest Spirit hunts you. Plant ten saplings to end the hunt.",
+  "authors": ["ChatGPT"],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": { "main": ["com.treehunt.TreeHuntMod"] },
+  "depends": {
+    "fabricloader": ">=0.18.1",
+    "minecraft": "1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

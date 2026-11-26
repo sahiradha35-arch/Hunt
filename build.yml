@@ -1,0 +1,47 @@
+name: Build Tree Hunt Fabric Mod
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build.yml'
+      - 'Tree_Hunt_Fabric_1.21.11_Source.zip'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.2.1'
+
+      - name: Extract source project ZIP
+        run: |
+          mkdir -p extracted
+          unzip -q 'Tree_Hunt_Fabric_1.21.11_Source.zip' -d extracted
+          PROJECT_DIR=$(find extracted -type f -name build.gradle -printf '%h\n' | head -n 1)
+          if [ -z "$PROJECT_DIR" ]; then
+            echo 'Could not find build.gradle in the uploaded source ZIP.'
+            exit 1
+          fi
+          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+
+      - name: Build mod JAR
+        run: gradle -p "$PROJECT_DIR" build --no-daemon
+
+      - name: Upload built JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tree-Hunt-Fabric-1.21.11-JAR
+          path: extracted/**/build/libs/*.jar
+          if-no-files-found: error
